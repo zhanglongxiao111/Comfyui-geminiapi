@@ -2,3 +2,4 @@ replicate
 pillow
 numpy
 torch
+google-genai
