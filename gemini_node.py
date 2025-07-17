@@ -19,6 +19,7 @@ class GeminiChatNode:
                 "model": ("STRING", {"default": "gemini-2.5-pro", "multiline": False}),
                 "temperature": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 2.0, "step": 0.1}),
                 "thinking": ("BOOLEAN", {"default": True}),
+                "seed": ("INT", {"default": 69, "min": -1, "max": 4294967295, "step": 1}),
                 "api_key": ("STRING", {"default": "", "multiline": False})
             },
             "optional": {
@@ -33,7 +34,7 @@ class GeminiChatNode:
     FUNCTION = "generate"
     CATEGORY = "AI/Gemini"
     
-    def generate(self, prompt: str, model: str, temperature: float, thinking: bool, api_key: str,
+    def generate(self, prompt: str, model: str, temperature: float, thinking: bool, seed: int, api_key: str,
                  system_instruction: Optional[str] = None, thinking_budget: int = -1, 
                  image: Optional[torch.Tensor] = None) -> tuple:
         
@@ -74,6 +75,7 @@ class GeminiChatNode:
             
             config = types.GenerateContentConfig(
                 temperature=temperature,
+                seed=seed,
                 response_mime_type="text/plain"
             )
             
