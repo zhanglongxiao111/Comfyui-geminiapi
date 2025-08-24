@@ -17,7 +17,7 @@ class FluxKontextProNode:
                     "default": "Make this a 90s cartoon"
                 }),
                 "replicate_api_token": ("STRING", {
-                    "default": "your_replicate_api_token_here"
+                    "default": ""
                 }),
                 "aspect_ratio": (["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "5:4", "4:5", "21:9", "9:21", "2:1", "1:2", "match_input_image"], {
                     "default": "match_input_image"

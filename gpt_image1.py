@@ -18,7 +18,7 @@ class GPTImageEditNode:
                     "default": "Edit this image"
                 }),
                 "api_key": ("STRING", {
-                    "default": "your-openai-api-key-here"
+                    "default": ""
                 }),
                 "background": (["auto", "transparent", "opaque"], {
                     "default": "auto"
