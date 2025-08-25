@@ -36,65 +36,62 @@ class GeminiChatNode:
     
     def generate(self, prompt: str, model: str, temperature: float, thinking: bool, seed: int, api_key: str,
                  system_instruction: Optional[str] = None, thinking_budget: int = -1, 
-                 image: Optional[torch.Tensor] = None) -> tuple:
+                 image: Optional[torch.Tensor] = None) -> tuple:   
+
+        key = api_key.strip() or os.environ.get("GEMINI_API_KEY")
+        if not key:
+            raise ValueError("Error: No API key provided.")
+
         
-        try:
-            # API key handling
-            key = api_key.strip() or os.environ.get("GEMINI_API_KEY")
-            if not key:
-                return ("Error: No API key provided.",)
+        # Initialize client and build parts
+        client = genai.Client(api_key=key)
+        parts = [types.Part.from_text(text=prompt)]
+        
+        # Handle image input
+        if image is not None:
+            img_array = image.cpu().numpy() if isinstance(image, torch.Tensor) else image
+            if len(img_array.shape) == 4:
+                img_array = img_array[0]
+            if img_array.dtype in [np.float32, np.float64]:
+                img_array = (img_array * 255).astype(np.uint8)
             
-            # Initialize client and build parts
-            client = genai.Client(api_key=key)
-            parts = [types.Part.from_text(text=prompt)]
+            buffered = io.BytesIO()
+            Image.fromarray(img_array).save(buffered, format="PNG")
+            parts.append(types.Part.from_bytes(mime_type="image/png", data=buffered.getvalue()))
+        
+        model_lower = model.lower()
+        
+        if "gemini-2.0" in model_lower:
+            final_thinking_budget = None
+        elif not thinking:
+            final_thinking_budget = 0
+            if "gemini-2.5-pro" in model_lower:
+                final_thinking_budget = -1
+        else:
+            final_thinking_budget = thinking_budget
+            if "gemini-2.5-pro" in model_lower and final_thinking_budget == 0:
+                final_thinking_budget = -1
+        
+        config = types.GenerateContentConfig(
+            temperature=temperature,
+            seed=seed,
+            response_mime_type="text/plain"
+        )
+        
+        if "gemini-2.0" not in model_lower:
+            config.thinking_config = types.ThinkingConfig(thinking_budget=final_thinking_budget)
+        
+        if system_instruction and system_instruction.strip():
+            config.system_instruction = [types.Part.from_text(text=system_instruction.strip())]
+        
+        response = client.models.generate_content(
+            model=model,
+            contents=[types.Content(role="user", parts=parts)],
+            config=config
+        )
+        
+        return (response.text,)
             
-            # Handle image input
-            if image is not None:
-                img_array = image.cpu().numpy() if isinstance(image, torch.Tensor) else image
-                if len(img_array.shape) == 4:
-                    img_array = img_array[0]
-                if img_array.dtype in [np.float32, np.float64]:
-                    img_array = (img_array * 255).astype(np.uint8)
-                
-                buffered = io.BytesIO()
-                Image.fromarray(img_array).save(buffered, format="PNG")
-                parts.append(types.Part.from_bytes(mime_type="image/png", data=buffered.getvalue()))
-            
-            model_lower = model.lower()
-            
-            if "gemini-2.0" in model_lower:
-                final_thinking_budget = None
-            elif not thinking:
-                final_thinking_budget = 0
-                if "gemini-2.5-pro" in model_lower:
-                    final_thinking_budget = -1
-            else:
-                final_thinking_budget = thinking_budget
-                if "gemini-2.5-pro" in model_lower and final_thinking_budget == 0:
-                    final_thinking_budget = -1
-            
-            config = types.GenerateContentConfig(
-                temperature=temperature,
-                seed=seed,
-                response_mime_type="text/plain"
-            )
-            
-            if "gemini-2.0" not in model_lower:
-                config.thinking_config = types.ThinkingConfig(thinking_budget=final_thinking_budget)
-            
-            if system_instruction and system_instruction.strip():
-                config.system_instruction = [types.Part.from_text(text=system_instruction.strip())]
-            
-            response = client.models.generate_content(
-                model=model,
-                contents=[types.Content(role="user", parts=parts)],
-                config=config
-            )
-            
-            return (response.text,)
-            
-        except Exception as e:
-            return (f"Error: {str(e)}",)
 
 # Node mappings
 NODE_CLASS_MAPPINGS = {"GeminiChatNode": GeminiChatNode}
