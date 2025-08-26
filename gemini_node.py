@@ -19,7 +19,7 @@ class GeminiChatNode:
                 "model": ("STRING", {"default": "gemini-2.5-pro", "multiline": False}),
                 "temperature": ("FLOAT", {"default": 0.2, "min": 0.0, "max": 2.0, "step": 0.1}),
                 "thinking": ("BOOLEAN", {"default": True}),
-                "seed": ("INT", {"default": 69, "min": -1, "max": 4294967295, "step": 1}),
+                "seed": ("INT", {"default": 69, "min": -1, "max": 2147483646, "step": 1}),
                 "api_key": ("STRING", {"default": "", "multiline": False})
             },
             "optional": {
