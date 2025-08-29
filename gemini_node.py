@@ -44,7 +44,7 @@ class GeminiChatNode:
 
         
         # Initialize client and build parts
-        client = genai.Client(api_key=key)
+        client = genai.Client(api_key=key, http_options=types.HttpOptions(retry_options=types.HttpRetryOptions(attempts=3, jitter=10)))
         parts = [types.Part.from_text(text=prompt)]
         
         # Handle image input
@@ -62,14 +62,17 @@ class GeminiChatNode:
         model_lower = model.lower()
         
         if "gemini-2.0" in model_lower:
+            print("Gemini-2.0 models do not support thinking - disabling thinking config")
             final_thinking_budget = None
         elif not thinking:
             final_thinking_budget = 0
             if "gemini-2.5-pro" in model_lower:
+                print("Gemini-2.5-Pro cannot have thinking turned off - defaulting thinking budget to -1")
                 final_thinking_budget = -1
         else:
             final_thinking_budget = thinking_budget
             if "gemini-2.5-pro" in model_lower and final_thinking_budget == 0:
+                print("Gemini-2.5-Pro cannot have thinking turned off - defaulting thinking budget to -1")
                 final_thinking_budget = -1
         
         config = types.GenerateContentConfig(
