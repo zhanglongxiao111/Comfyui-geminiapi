@@ -3,3 +3,4 @@ pillow
 numpy
 torch
 google-genai
+opencv-python
