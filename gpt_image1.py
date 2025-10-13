@@ -53,7 +53,7 @@ class GPTImageEditNode:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
     FUNCTION = "edit_image"
-    CATEGORY = "image/ai"
+    CATEGORY = "image/edit"
     
     def tensor_to_pil(self, tensor):
         if len(tensor.shape) == 3:

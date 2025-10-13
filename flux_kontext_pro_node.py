@@ -16,7 +16,7 @@ class FluxKontextProNode:
                     "multiline": True,
                     "default": "Make this a 90s cartoon"
                 }),
-                "replicate_api_token": ("STRING", {
+                "api_key": ("STRING", {
                     "default": ""
                 }),
                 "aspect_ratio": (["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "5:4", "4:5", "21:9", "9:21", "2:1", "1:2", "match_input_image"], {
@@ -37,11 +37,11 @@ class FluxKontextProNode:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
     FUNCTION = "generate_image"
-    CATEGORY = "image/generation"
+    CATEGORY = "image/edit"
     
-    def generate_image(self, image, prompt, replicate_api_token, aspect_ratio, output_format, safety_tolerance):
+    def generate_image(self, image, prompt, api_key, aspect_ratio, output_format, safety_tolerance):
         try:
-            os.environ["REPLICATE_API_TOKEN"] = replicate_api_token
+            os.environ["REPLICATE_API_TOKEN"] = api_key
             
             # Convert tensor to PIL and save to buffer
             tensor = image.squeeze(0) if len(image.shape) == 4 else image

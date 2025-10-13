@@ -32,7 +32,7 @@ class GeminiChatNode:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("response",)
     FUNCTION = "generate"
-    CATEGORY = "AI/Gemini"
+    CATEGORY = "text/generation"
     
     def generate(self, prompt: str, model: str, temperature: float, thinking: bool, seed: int, api_key: str,
                  system_instruction: Optional[str] = None, thinking_budget: int = -1, 
