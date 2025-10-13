@@ -13,6 +13,8 @@ A collection of powerful custom nodes for ComfyUI that connect your local workfl
 *   **Google Imagen Generator & Edit:** Create and edit images with Google's Imagen models, with support for Vertex AI.
 *   **Nano Banana:** A creative image generation node using a specialized Gemini model.
 *   **Veo Text-to-Video:** Generate high-quality video clips from text prompts using Google's Veo model via Vertex AI.
+*   **ElevenLabs TTS:** Generate high-quality speech from text using ElevenLabs' diverse range of voices and models.
+*   **Gemini TTS:** Create speech from text using Google's Gemini models.
 *   **Seamless Integration:** All nodes are designed to work seamlessly with standard ComfyUI inputs (IMAGE, MASK, STRING) and outputs, allowing you to chain them into complex and creative workflows.
 *   **Secure & Simple:** Simply provide your API key in the node's input field to get started.
 
@@ -44,8 +46,9 @@ A collection of powerful custom nodes for ComfyUI that connect your local workfl
 All nodes in this collection require API keys to function.
 
 *   **FLUX Nodes (Replicate):** You will need a [Replicate API Token](https://replicate.com/account/api-tokens).
-*   **Gemini, Imagen, and Nano Banana Nodes:** You will need a [Google AI Studio API Key](https://aistudio.google.com/app/api-keys).
+*   **Gemini, Imagen, Nano Banana, and Gemini TTS Nodes:** You will need a [Google AI Studio API Key](https://aistudio.google.com/app/api-keys).
 *   **GPT Image Edit Node:** You will need an [OpenAI API Key](https://platform.openai.com/api-keys).
+*   **ElevenLabs TTS Node:** You will need an [ElevenLabs API Key](https://elevenlabs.io/).
 *   **Vertex AI Nodes (Imagen Edit, Veo):** You will need a Google Cloud Project ID, a service account with appropriate permissions, and the location for the resources.
 
 You can paste your key directly into the `api_key` field on the corresponding node. For Vertex AI nodes, you will need to provide the project ID, location, and path to your service account JSON file.
@@ -173,6 +176,42 @@ Generate short, high-quality video clips from a text description using Google's 
     *   `frames`: The generated video frames, output as an image batch.
 
 ---
+
+### ElevenLabs TTS
+
+Generate speech from text using the ElevenLabs API.
+
+*   **Category:** `audio/generation`
+*   **Inputs:**
+    *   `text`: The text to convert to speech.
+    *   `api_key`: Your API key from ElevenLabs.
+    *   `voice_id`: The ID of the voice to use for generation.
+    *   `model_id`: The ElevenLabs model to use.
+    *   `output_format`: The desired output audio format.
+    *   `stability`: Controls the stability and variability of the generated speech.
+    *   `similarity_boost`: Enhances the similarity of the generated speech to the chosen voice.
+    *   `speed`: Adjusts the speaking rate.
+    *   `style`: Controls the expressiveness of the speech.
+    *   `use_speaker_boost`: A boolean to enable or disable speaker boost.
+    *   `seed`: A seed for ensuring reproducible results.
+*   **Output:**
+    *   `audio`: The generated audio waveform and sample rate.
+
+### Gemini TTS
+
+Generate speech from text using Google's Gemini TTS models.
+
+*   **Category:** `audio/generation`
+*   **Inputs:**
+    *   `text`: The text to be converted into speech.
+    *   `api_key`: Your API key from Google AI Studio.
+    *   `model`: The specific Gemini model to use for generation.
+    *   `voice_id`: The prebuilt voice to use for the output.
+    *   `temperature`: Controls the randomness and creativity of the output.
+    *   `seed`: A seed for ensuring reproducible results.
+    *   `system_prompt` (Optional): A system-level instruction to guide the model's behavior.
+*   **Output:**
+    *   `audio`: The generated audio waveform and sample rate.
 
 
 ##  Acknowledgements

@@ -1,6 +1,5 @@
 import requests
 import base64
-import json
 import torch
 import numpy as np
 from PIL import Image

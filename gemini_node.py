@@ -1,4 +1,3 @@
-import base64
 import os
 import io
 import numpy as np

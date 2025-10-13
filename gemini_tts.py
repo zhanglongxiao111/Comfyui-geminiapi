@@ -10,15 +10,15 @@ class GeminiTTSNode:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "text": ("STRING", {"multiline": True, "default": ""}),
-                "api_key": ("STRING", {"multiline": False, "default": ""}),
-                "model": ("STRING", {"default": "gemini-2.5-flash-preview-tts", "multiline": False}),
-                "voice_id": (["Zephyr", "Puck", "Charon", "Kore", "Fenrir", "Leda", "Orus", "Aoede", "Callirrhoe", "Autonoe", "Enceladus", "Iapetus", "Umbriel", "Algieba", "Despina", "Erinome", "Achernar", "Laomedeia", "Rasalgethi", "Algenib", "Achird", "Pulcherrima", "Gacrux", "Schedar", "Alnilam", "Sulafat", "Sadaltager", "Sadachbia", "Vindemiatrix", "Zubenelgenubi"],),                
-                "seed": ("INT", {"default": 69, "min": -1, "max": 2147483646, "step": 1}),
-                "temperature": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
+            "text": ("STRING", {"multiline": True, "default": ""}),
+            "api_key": ("STRING", {"multiline": False, "default": ""}),
+            "model": (["gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"],),
+            "voice_id": (["Zephyr", "Puck", "Charon", "Kore", "Fenrir", "Leda", "Orus", "Aoede", "Callirrhoe", "Autonoe", "Enceladus", "Iapetus", "Umbriel", "Algieba", "Despina", "Erinome", "Achernar", "Laomedeia", "Rasalgethi", "Algenib", "Achird", "Pulcherrima", "Gacrux", "Schedar", "Alnilam", "Sulafat", "Sadaltager", "Sadachbia", "Vindemiatrix", "Zubenelgenubi"],),                
+            "seed": ("INT", {"default": 69, "min": -1, "max": 2147483646, "step": 1}),
+            "temperature": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
             },
             "optional": {
-                "system_prompt": ("STRING", {"multiline": True, "default": ""}),
+            "system_prompt": ("STRING", {"multiline": True, "default": ""}),
             }
         }
     
