@@ -67,8 +67,13 @@ class NanoBananaNode:
         return Image.fromarray(array)
 
     def pil_to_tensor(self, images: List[Image.Image]):
+        target_size = None
         tensors = []
         for image in images:
+            if target_size is None:
+                target_size = image.size
+            elif image.size != target_size:
+                image = image.resize(target_size, Image.LANCZOS)
             if image.mode != "RGB":
                 image = image.convert("RGB")
             array = np.array(image).astype(np.float32) / 255.0
@@ -172,8 +177,9 @@ class NanoBananaNode:
             print("[Nano Banana] API returned no images; using fallback frame.")
         return images
 
-    def _blank_image(self) -> Image.Image:
-        return Image.new("RGB", (512, 512), color="#000000")
+    def _blank_image(self, size: Optional[tuple[int, int]] = None) -> Image.Image:
+        width, height = size or (512, 512)
+        return Image.new("RGB", (width, height), color="#000000")
 
     def _accumulate_results(
         self,
@@ -183,9 +189,13 @@ class NanoBananaNode:
         results: List[Image.Image] = []
         errors: List[Exception] = []
 
+        primary_size: Optional[tuple[int, int]] = None
+
         for item in generator:
             try:
                 batch = item() if callable(item) else item
+                if batch and primary_size is None:
+                    primary_size = batch[0].size
                 results.extend(batch)
                 if len(results) >= desired:
                     break
@@ -200,7 +210,8 @@ class NanoBananaNode:
                     f"[Nano Banana] Encountered {len(errors)} errors; "
                     "supplementing with fallback frames."
                 )
-            results.extend(self._blank_image() for _ in range(missing))
+            fallback_size = primary_size or (512, 512)
+            results.extend(self._blank_image(fallback_size) for _ in range(missing))
 
         if not results:
             results = [self._blank_image() for _ in range(desired)]
