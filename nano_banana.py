@@ -183,9 +183,9 @@ class NanoBananaNode:
         results: List[Image.Image] = []
         errors: List[Exception] = []
 
-        for images in generator:
+        for item in generator:
             try:
-                batch = images()
+                batch = item() if callable(item) else item
                 results.extend(batch)
                 if len(results) >= desired:
                     break
@@ -283,7 +283,7 @@ class NanoBananaNode:
                         )
                     )
                 for future in as_completed(futures):
-                    yield future.result
+                    yield lambda fut=future: fut.result()
 
         use_parallel = bool(use_concurrency) and desired_count > 1
         generator = concurrent_generator if use_parallel else sequential_generator
