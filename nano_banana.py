@@ -200,6 +200,7 @@ class NanoBananaNode:
                 if len(results) >= desired:
                     break
             except Exception as exc:
+                print(f"[Nano Banana] Request failed: {exc}")
                 errors.append(exc)
                 continue
 
