@@ -25,7 +25,7 @@ class GeminiTTSNode:
     RETURN_TYPES = ("AUDIO",)
     RETURN_NAMES = ("audio",)
     FUNCTION = "generate_speech"
-    CATEGORY = "audio/generation"
+    CATEGORY = "ExternalAPI/Audio"
     
     def generate_speech(self, text, api_key, voice_id, temperature, model, seed, system_prompt=""):
         

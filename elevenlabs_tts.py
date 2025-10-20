@@ -58,7 +58,7 @@ class ElevenLabsTTSNode:
     RETURN_TYPES = ("AUDIO",)
     RETURN_NAMES = ("audio",)
     FUNCTION = "generate_speech"
-    CATEGORY = "audio/generation"
+    CATEGORY = "ExternalAPI/Audio"
     
     def generate_speech(self, text, api_key, voice_id, model_id, output_format, 
                        stability, similarity_boost, speed, style, use_speaker_boost, seed,

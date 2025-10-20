@@ -31,7 +31,7 @@ class GoogleImagenEditNode:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("edited_images",)
     FUNCTION = "edit_image"
-    CATEGORY = "image/edit"
+    CATEGORY = "ExternalAPI/Image/Edit"
     
     def tensor_to_pil(self, tensor):
         array = (tensor.cpu().numpy() * 255).astype(np.uint8)

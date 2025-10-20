@@ -45,7 +45,7 @@ class Veo3VideoGenerator:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("frames",)
     FUNCTION = "generate_video"
-    CATEGORY = "video/generation"
+    CATEGORY = "ExternalAPI/Video"
     
     def setup_client(self, service_account_path, project_id, location):
         if service_account_path.strip():

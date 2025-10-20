@@ -31,7 +31,7 @@ class GeminiSegmentationNode:
     RETURN_TYPES = ("MASK",)
     RETURN_NAMES = ("mask",)
     FUNCTION = "generate_segmentation"
-    CATEGORY = "image/generation"
+    CATEGORY = "ExternalAPI/Image/Generation"
     
     def generate_segmentation(self, image: torch.Tensor, segment_prompt: str, model: str, 
                             temperature: float, thinking: bool, seed: int, api_key: str,

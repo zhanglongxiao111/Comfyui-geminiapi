@@ -37,7 +37,7 @@ class FluxKontextProNode:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
     FUNCTION = "generate_image"
-    CATEGORY = "image/edit"
+    CATEGORY = "ExternalAPI/Image/Edit"
     
     def generate_image(self, image, prompt, api_key, aspect_ratio, output_format, safety_tolerance):
         try:

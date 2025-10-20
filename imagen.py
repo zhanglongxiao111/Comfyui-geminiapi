@@ -23,7 +23,7 @@ class GoogleImagenNode:
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("images",)
     FUNCTION = "generate_images"
-    CATEGORY = "image/generation"
+    CATEGORY = "ExternalAPI/Image/Generation"
     
     def pil_to_tensor(self, images):
         if not isinstance(images, list):
