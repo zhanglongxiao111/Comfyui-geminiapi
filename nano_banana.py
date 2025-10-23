@@ -33,7 +33,7 @@ class NanoBananaNode:
                 ),
                 "image_count": (
                     "INT",
-                    {"default": 1, "min": 1, "max": 5, "step": 1},
+                    {"default": 1, "min": 1, "max": 15, "step": 1},
                 ),
             },
             "optional": {
@@ -49,7 +49,7 @@ class NanoBananaNode:
                 "api_key_input": ("STRING", {"multiline": False, "default": ""}),
                 "image_count_input": (
                     "INT",
-                    {"default": 0, "min": 0, "max": 5, "step": 1},
+                    {"default": 0, "min": 0, "max": 15, "step": 1},
                 ),
                 "use_concurrency": ("BOOLEAN", {"default": False}),
             },
@@ -91,7 +91,7 @@ class NanoBananaNode:
     def _resolve_count(self, manual: int, incoming: Optional[int]) -> int:
         candidate = incoming if isinstance(incoming, int) and incoming > 0 else manual
         candidate = max(1, candidate)
-        return min(candidate, 5)
+        return min(candidate, 15)
 
     def _encode_reference_images(
         self, tensors: List[Optional[torch.Tensor]]
