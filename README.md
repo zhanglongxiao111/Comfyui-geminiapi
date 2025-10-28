@@ -1,221 +1,130 @@
-# ComfyUI-ExternalAPI-Helpers
+# ComfyUI-ExternalAPI-Helpers 中文说明
 
-A collection of powerful custom nodes for ComfyUI that connect your local workflows to closed-source AI models via their APIs. Use Google's Gemini, Imagen, Veo, OpenAI's GPT-Image-1, and Black Forest Labs' FLUX models directly within ComfyUI.
+> 原作者：**Aryan185**（GitHub）。在此基础上，我们补充了 Gemini / Replicate 节点改进与中文文档，方便国内用户快速上手。
 
-
-
-## Key Features
-
-*   **FLUX Kontext Pro & Max:** Image-to-image transformations using the FLUX models via the Replicate API.
-*   **Gemini Chat:** Google's powerful multimodal AI. Ask questions about an image, generate detailed descriptions or create prompts for other models. Supports thinking budget controls for applicable models.
-*   **Gemini Segmentation:** Generate segmentation masks for objects in an image using Gemini.
-*   **GPT Image Edit:** OpenAI's `gpt-image-1` for prompt-based image editing and inpainting. Simply mask an area and describe the change you want to see.
-*   **Google Imagen Generator & Edit:** Create and edit images with Google's Imagen models, with support for Vertex AI.
-*   **Nano Banana:** A creative image generation node using a specialized Gemini model.
-*   **Veo Text-to-Video:** Generate high-quality video clips from text prompts using Google's Veo model via Vertex AI.
-*   **ElevenLabs TTS:** Generate high-quality speech from text using ElevenLabs' diverse range of voices and models.
-*   **Gemini TTS:** Create speech from text using Google's Gemini models.
-*   **Seamless Integration:** All nodes are designed to work seamlessly with standard ComfyUI inputs (IMAGE, MASK, STRING) and outputs, allowing you to chain them into complex and creative workflows.
-*   **Secure & Simple:** Simply provide your API key in the node's input field to get started.
+本仓库提供一组 ComfyUI 自定义节点，可在本地工作流中直接调用以下服务：  
+Gemini（Chat / Segmentation / TTS / Nano Banana / Imagen / Veo）、OpenAI GPT-Image-1、Replicate 上的 FLUX 系列、ElevenLabs 语音等。
 
 ---
 
-## 🚀 Installation
+## 近期更新（2025-10）
 
-1.  Navigate to your ComfyUI installation directory.
-2.  Go into the `custom_nodes` folder:
-    ```bash
-    cd ComfyUI/custom_nodes/
-    ```
-3.  Clone this repository:
-    ```bash
-    git clone https://github.com/Aryan185/ComfyUI-ExternalAPI-Helpers.git
-    ```
-
-4.  Install the required Python packages. Navigate into the newly cloned directory and use pip to install the dependencies:
-    ```bash
-    cd ComfyUI-ExternalAPI-Helpers
-    pip install -r requirements.txt
-    ```
-5.  **Restart ComfyUI.** After restarting, you should find the new nodes in the "Add Node" menu.
+- **Nano Banana 节点**
+  - 最大生成数量提升为 **15 张**，支持端口覆写与并发控制。
+  - 自动对齐输出尺寸，失败时补齐占位图并输出详细日志。
+  - 支持环境变量回落（`GEMINI_API_KEY`）与端口输入互斥逻辑。
+- 文档改为中文，补充了安装步骤、依赖说明、常见问题以及原作者信息。
 
 ---
 
-## 🔑 Prerequisites: API Keys
+## 安装步骤
 
-All nodes in this collection require API keys to function.
+1. **复制节点包至 custom_nodes**
+   ```bash
+   cd /path/to/ComfyUI/custom_nodes
+   git clone https://github.com/zhanglongxiao111/Comfyui-geminiapi.git
+   ```
+   或直接拷贝压缩包解压到 `custom_nodes` 目录。
 
-*   **FLUX Nodes (Replicate):** You will need a [Replicate API Token](https://replicate.com/account/api-tokens).
-*   **Gemini, Imagen, Nano Banana, and Gemini TTS Nodes:** You will need a [Google AI Studio API Key](https://aistudio.google.com/app/api-keys).
-*   **GPT Image Edit Node:** You will need an [OpenAI API Key](https://platform.openai.com/api-keys).
-*   **ElevenLabs TTS Node:** You will need an [ElevenLabs API Key](https://elevenlabs.io/).
-*   **Vertex AI Nodes (Imagen Edit, Veo):** You will need a Google Cloud Project ID, a service account with appropriate permissions, and the location for the resources.
+2. **安装依赖（使用 ComfyUI 的 Python 环境）**
+   ```bash
+   cd Comfyui-geminiapi
+   python -m pip install -r requirements.txt
+   ```
+   主要依赖：`google-generativeai`、`requests`、`nest-asyncio` 等。如遇缺包，可再次执行该命令。
 
-You can paste your key directly into the `api_key` field on the corresponding node. For Vertex AI nodes, you will need to provide the project ID, location, and path to your service account JSON file.
+3. **重启 ComfyUI**。节点会自动加载，位于 `ExternalAPI/*`、`Replicate/` 等分类中。
 
 ---
 
-## 📚 Node Guide
+## API Key / 权限需求
 
-### Flux Kontext Pro / Max
+| 节点 | 所需凭证 |
+| --- | --- |
+| FLUX Kontext Pro / Max | Replicate API Token |
+| Gemini Chat / Segmentation / TTS / Nano Banana | Google AI Studio API Key (`GEMINI_API_KEY`) |
+| Imagen 生成 | Google AI Studio API Key |
+| Imagen Edit（Vertex）/ Veo 视频 | Google Cloud 项目、服务账号 JSON、Region |
+| GPT Image Edit | OpenAI API Key |
+| ElevenLabs TTS | ElevenLabs API Key |
 
-These nodes allow you to transform an input image based on a text prompt. They are ideal for applying artistic styles or making significant conceptual changes to an existing image.
+- 节点面板允许直接输入 Key；为空时会尝试读取环境变量。  
+- 可通过「API Key 连接」节点输出给其他节点复用。
 
-*   **Category:** `image/edit`
-*   **Inputs:**
-    *   `image`: The source image to transform.
-    *   `prompt`: A text description of the desired output (e.g., "A vibrant Van Gogh painting", "Make this a 90s cartoon").
-    *   `replicate_api_token`: Your API token from Replicate.
-    *   `aspect_ratio`: The desired output aspect ratio. `match_input_image` is highly recommended to preserve the original composition.
-    *   `output_format`: `jpg` or `png`.
-    *   `safety_tolerance`: Adjust the content safety filter level.
-*   **Output:**
-    *   `image`: The generated image.
+---
+
+## 节点概览
+
+### FLUX Kontext Pro / Max
+- **分类**：`ExternalAPI/Image/Edit`
+- **功能**：经由 Replicate 调用 FLUX 模型，对输入图像做风格转换或深度重绘。
+- **要点**：支持选择输出比例、格式、安全等级，默认推荐 `aspect_ratio = match_input_image`。
 
 ### Gemini Chat
-
-A versatile node for text generation and image analysis. Use it to understand an image's content or to generate creative text for other nodes.
-
-*   **Category:** `text/generation`
-*   **Inputs:**
-    *   `prompt`: The text prompt or question you want to ask the model.
-    *   `image` (Optional): An input image for the model to analyze.
-    *   `api_key`: Your API key from Google AI Studio.
-    *   `model`: The Gemini model to use (e.g., `gemini-2.5-pro`).
-    *   `system_instruction` (Optional): Provide context or rules for how the model should behave.
-    *   `temperature`: Controls the creativity of the output. Higher is more creative.
-    *   `thinking`: Enables the model's thinking/reasoning process (Gemini 2.5 Pro).
-*   **Output:**
-    *   `response`: The text generated by the Gemini model.
+- **分类**：`ExternalAPI/Text`
+- **功能**：多模态对话，可读取图片、生成描述或提示词。支持 `thinking`（思维预算）和 `system_instruction`。
 
 ### Gemini Segmentation
-
-This node uses a Gemini model to generate segmentation masks for specified objects within an image.
-
-*   **Category:** `image/generation`
-*   **Inputs:**
-    *   `image`: The source image for segmentation.
-    *   `segment_prompt`: A text description of the objects to segment (e.g., "the car", "all people").
-    *   `api_key`: Your API key from Google AI Studio.
-    *   `model`: The Gemini model to use.
-    *   `...other_params`: Controls for temperature, thinking, and seed.
-*   **Output:**
-    *   `mask`: A black and white mask of the segmented objects.
+- **分类**：`ExternalAPI/Image/Analysis`
+- **功能**：按文本描述生成分割掩码，可用于后续抠图、局部编辑。
 
 ### GPT Image Edit
+- **分类**：`ExternalAPI/Image/Edit`
+- **功能**：OpenAI `gpt-image-1` 版的局部修复。需同时提供图片与遮罩。
 
-This node uses OpenAI's API to perform powerful, prompt-based inpainting and editing.
-
-*   **Category:** `image/edit`
-*   **Inputs:**
-    *   `image`: The source image to edit.
-    *   `mask` (Optional): A black and white mask. The model will edit the **white area** of the mask.
-    *   `prompt`: A description of the edit to perform (e.g., "Add a small red boat on the water", "Remove the person on the left").
-    *   `api_key`: Your API key from OpenAI.
-    *   `...other_params`: Various quality and formatting options for the OpenAI API.
-*   **Output:**
-    *   `image`: The edited image.
-
-**Note:** If a mask is provided, the edits will be constrained to the masked region. If no mask is provided, the model will attempt to edit the entire image based on the prompt.
-
-### Google Imagen Generator
-
-Generate images from a text prompt using Google's Imagen models.
-
-*   **Category:** `image/generation`
-*   **Inputs:**
-    *   `prompt`: A text description of the image to generate.
-    *   `api_key`: Your API key from Google AI Studio.
-    *   `model`: The Imagen model to use.
-    *   `...other_params`: Options for number of images, aspect ratio, and image size.
-*   **Output:**
-    *   `images`: The generated image(s).
-
-### Google Imagen Edit (Vertex AI only)
-
-Perform advanced image editing, inpainting, outpainting, and background swapping using Imagen on Google's Vertex AI platform.
-
-*   **Category:** `image/edit`
-*   **Inputs:**
-    *   `image`: The source image to edit.
-    *   `mask`: A mask defining the area to edit.
-    *   `prompt`: A description of the desired edit.
-    *   `project_id`: Your Google Cloud Project ID.
-    *   `location`: The Google Cloud location for the model.
-    *   `service_account`: Path to your Google Cloud service account JSON file.
-    *   `edit_mode`: The type of edit to perform (e.g., inpainting, outpainting).
-    *   `...other_params`: Controls for negative prompt, seed, and steps.
-*   **Output:**
-    *   `edited_images`: The edited image(s).
+### Google Imagen 系列
+- **生成**：`ExternalAPI/Image/Generation`，文本转图像。
+- **编辑（Vertex）**：`ExternalAPI/Image/Edit`，支持 inpaint/outpaint/背景替换；需配置 Google Cloud 项目、区域和服务账号。
 
 ### Nano Banana
+- **分类**：`ExternalAPI/Image/Generation`
+- **功能**：基于 `gemini-2.5-flash-image` 的多图参考生成。
+- **特性**：
+  - `image_count` 1~15；配合 `use_concurrency` 控制并发。
+  - 自动对齐输出尺寸；失败时补齐黑图并记录日志 `[Nano Banana] Request failed: ...`。
+  - 支持提示词 / API Key 面板输入或端口覆写，优先级清晰。
 
-A creative image generation node that can take a combination of text and up to five images as input.
+### Veo 文生视频（Vertex）
+- **分类**：`ExternalAPI/Video`
+- **功能**：文生短视频，输出帧序列，可接 ComfyUI 内的打包/转码节点。
 
-*   **Category:** `image/generation`
-*   **Inputs:**
-    *   `api_key`: Your API key from Google AI Studio.
-    *   `prompt` (Optional): A text prompt.
-    *   `image_1` to `image_5` (Optional): Up to five source images.
-    *   `...other_params`: Controls for aspect ratio, temperature, top_p, and seed.
-*   **Output:**
-    *   `image`: The generated image.
-
-### Veo Text-to-Video (Vertex AI)
-
-Generate short, high-quality video clips from a text description using Google's Veo model on Vertex AI.
-
-*   **Category:** `video/generation`
-*   **Inputs:**
-    *   `prompt`: A text description of the video to generate.
-    *   `project_id`: Your Google Cloud Project ID.
-    *   `location`: The Google Cloud location for the model.
-    *   `service_account`: Path to your Google Cloud service account JSON file.
-    *   `...other_params`: Controls for negative prompt, aspect ratio, audio generation, and seed.
-*   **Output:**
-    *   `frames`: The generated video frames, output as an image batch.
+### ElevenLabs TTS & Gemini TTS
+- **分类**：`ExternalAPI/Audio`
+- **功能**：文本转语音，分别调用 ElevenLabs 与 Gemini 服务，可调语速、音色、种子等。
 
 ---
 
-### ElevenLabs TTS
+## 常见问题与建议
 
-Generate speech from text using the ElevenLabs API.
+1. **生成时间较长或请求失败**
+   - Google API 会对并发请求限速。当日志出现 `[Nano Banana] Request failed` 时，可降低 `image_count` 或取消并发。
+   - 建议在节点下游留意文本输出，失败时会返回详细错误信息与占位图。
 
-*   **Category:** `audio/generation`
-*   **Inputs:**
-    *   `text`: The text to convert to speech.
-    *   `api_key`: Your API key from ElevenLabs.
-    *   `voice_id`: The ID of the voice to use for generation.
-    *   `model_id`: The ElevenLabs model to use.
-    *   `output_format`: The desired output audio format.
-    *   `stability`: Controls the stability and variability of the generated speech.
-    *   `similarity_boost`: Enhances the similarity of the generated speech to the chosen voice.
-    *   `speed`: Adjusts the speaking rate.
-    *   `style`: Controls the expressiveness of the speech.
-    *   `use_speaker_boost`: A boolean to enable or disable speaker boost.
-    *   `seed`: A seed for ensuring reproducible results.
-*   **Output:**
-    *   `audio`: The generated audio waveform and sample rate.
+2. **API Key 没被读取**
+   - 确认已在 ComfyUI 启动终端中设置环境变量，如 `set GEMINI_API_KEY=xxxx`（Windows）。
+   - 或者使用「API Key 连接」节点，将密钥从上游传入。
 
-### Gemini TTS
+3. **依赖安装失败**
+   - 请先升级 pip：`python -m pip install --upgrade pip`。
+   - 若使用 ComfyUI 捆绑 Python，请在 `ComfyUI/python/python.exe` 下执行安装命令。
 
-Generate speech from text using Google's Gemini TTS models.
+4. **日志位置**
+   - ComfyUI 根目录的 `comfyui.log`、`comfyui.prev.log`。
+   - 本仓库的 `报错信息/*.md` 文件会记录最近的报错与工作流快照。
 
-*   **Category:** `audio/generation`
-*   **Inputs:**
-    *   `text`: The text to be converted into speech.
-    *   `api_key`: Your API key from Google AI Studio.
-    *   `model`: The specific Gemini model to use for generation.
-    *   `voice_id`: The prebuilt voice to use for the output.
-    *   `temperature`: Controls the randomness and creativity of the output.
-    *   `seed`: A seed for ensuring reproducible results.
-    *   `system_prompt` (Optional): A system-level instruction to guide the model's behavior.
-*   **Output:**
-    *   `audio`: The generated audio waveform and sample rate.
+---
 
+## 贡献与授权
 
-##  Acknowledgements
+- 欢迎 PR / Issue 反馈改进建议；提交代码时请附上测试说明。
+- 请在二次分发或引用时保留原作者（Aryan185）与本中文维护者的信息，并附上本 README 供其他用户正确安装。
 
-*   The [ComfyUI](https://github.com/comfyanonymous/ComfyUI) team for creating such a flexible and powerful platform.
-*   [Google](https://deepmind.google/technologies/gemini/), [OpenAI](https://openai.com/), and [Black Forest Labs](https://www.blackforestlabs.ai/) for developing these incredible models.
-*   [Replicate](https://replicate.com/) for providing easy API access to a wide range of models.
+---
+
+## 鸣谢
+
+- [ComfyUI](https://github.com/comfyanonymous/ComfyUI) 提供自由灵活的节点系统。
+- [Google](https://deepmind.google/technologies/gemini/)、[OpenAI](https://openai.com/)、[Black Forest Labs](https://www.blackforestlabs.ai/)、[ElevenLabs](https://elevenlabs.io/) 等厂商的模型与 API 服务。
+- [Replicate](https://replicate.com/) 为第三方模型提供方便的调用通道。
+
+如在使用过程中遇到问题，欢迎在仓库中提交 Issue 或讨论。祝你玩得开心！
