@@ -89,4 +89,5 @@ if not exist "%REPO_DIR%\requirements.txt" (
 echo.
 echo [5/5] 完成。请重启 ComfyUI 使节点生效。
 echo.
+pause
 exit /b 0
