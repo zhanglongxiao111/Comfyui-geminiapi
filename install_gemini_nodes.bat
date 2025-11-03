@@ -9,7 +9,21 @@ rem ============================================================================
 
 set "SCRIPT_DIR=%~dp0"
 set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
-set "COMFY_ROOT=%SCRIPT_DIR%"
+set "SEARCH_DIR=%SCRIPT_DIR%"
+
+for /L %%i in (0,1,3) do (
+    if exist "!SEARCH_DIR!\python\python.exe" (
+        set "COMFY_ROOT=!SEARCH_DIR!"
+        goto :FOUND_PYTHON
+    )
+    for %%j in ("!SEARCH_DIR!\..") do set "SEARCH_DIR=%%~fj"
+)
+
+echo  错误：未能在当前目录及其上级找到 python\python.exe
+echo  请将脚本放在 ComfyUI 根目录或其 custom_nodes 子目录下再试。
+exit /b 1
+
+:FOUND_PYTHON
 set "PYTHON_EXE=%COMFY_ROOT%\python\python.exe"
 set "CUSTOM_NODES_DIR=%COMFY_ROOT%\custom_nodes"
 set "REPO_DIR=%CUSTOM_NODES_DIR%\Comfyui-geminiapi"
