@@ -7,7 +7,9 @@ rem  作者：zhanglongxiao111（基于 Aryan185 的原始项目）
 rem  用途：在固定目录下克隆/更新节点仓库，并安装所需依赖
 rem ============================================================================
 
-set "COMFY_ROOT=F:\stable diffusion\ComfyUI-aki-v1.3"
+set "SCRIPT_DIR=%~dp0"
+set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+set "COMFY_ROOT=%SCRIPT_DIR%"
 set "PYTHON_EXE=%COMFY_ROOT%\python\python.exe"
 set "CUSTOM_NODES_DIR=%COMFY_ROOT%\custom_nodes"
 set "REPO_DIR=%CUSTOM_NODES_DIR%\Comfyui-geminiapi"
