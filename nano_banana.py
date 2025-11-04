@@ -17,7 +17,7 @@ class NanoBananaNode:
             "required": {
                 "api_key": ("STRING", {"multiline": False, "default": ""}),
                 "aspect_ratio": (
-                    ["auto", "1:1", "2:3", "3:2", "3:4", "4:3", "9:16", "16:9", "21:9"],
+                    ["auto", "1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
                 ),
                 "temperature": (
                     "FLOAT",
