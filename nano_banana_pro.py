@@ -268,6 +268,7 @@ class NanoBananaProNode:
             # Try to extract body text for API errors
             text = getattr(response, "text", None)
             content = getattr(response, "content", None)
+            json_data = getattr(response, "json", None)
             if isinstance(text, str) and text:
                 body = text
             elif isinstance(content, (bytes, bytearray)):
@@ -275,11 +276,23 @@ class NanoBananaProNode:
                     body = content.decode("utf-8", errors="ignore")
                 except Exception:
                     body = None
+            elif callable(json_data):
+                try:
+                    body = json_data()
+                except Exception:
+                    body = None
         if body:
-            trimmed = body.strip()
-            if len(trimmed) > 500:
-                trimmed = trimmed[:500] + "...(truncated)"
-            parts.append(f"body={trimmed}")
+            if isinstance(body, (dict, list)):
+                import json
+                try:
+                    body_str = json.dumps(body)
+                except Exception:
+                    body_str = str(body)
+            else:
+                body_str = str(body).strip()
+            if len(body_str) > 800:
+                body_str = body_str[:800] + "...(truncated)"
+            parts.append(f"body={body_str}")
 
         return " | ".join(parts)
 
