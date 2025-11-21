@@ -171,12 +171,21 @@ class NanoBananaProNode:
         client = genai.Client(api_key=api_key)
         contents = self._build_contents(prompt, image_payloads)
 
+        # Build image_config only if needed; omit when aspect_ratio is "auto" to avoid INVALID_ARGUMENT.
+        image_cfg_kwargs = {}
+        if aspect_ratio and aspect_ratio != "auto":
+            image_cfg_kwargs["aspect_ratio"] = aspect_ratio
+        if image_size:
+            image_cfg_kwargs["image_size"] = image_size
+        image_config = types.ImageConfig(**image_cfg_kwargs) if image_cfg_kwargs else None
+
         config_kwargs = {
             "temperature": temperature,
             "top_p": top_p,
             "response_modalities": ["IMAGE"],
-            "image_config": types.ImageConfig(aspect_ratio=aspect_ratio, image_size=image_size),
         }
+        if image_config is not None:
+            config_kwargs["image_config"] = image_config
         if isinstance(seed, int) and seed >= 0:
             config_kwargs["seed"] = seed
 
