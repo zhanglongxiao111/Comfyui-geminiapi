@@ -262,6 +262,25 @@ class NanoBananaProNode:
         if isinstance(message, str) and message:
             parts.append(f"message={message}")
 
+        response = getattr(exc, "response", None)
+        body = None
+        if response is not None:
+            # Try to extract body text for API errors
+            text = getattr(response, "text", None)
+            content = getattr(response, "content", None)
+            if isinstance(text, str) and text:
+                body = text
+            elif isinstance(content, (bytes, bytearray)):
+                try:
+                    body = content.decode("utf-8", errors="ignore")
+                except Exception:
+                    body = None
+        if body:
+            trimmed = body.strip()
+            if len(trimmed) > 500:
+                trimmed = trimmed[:500] + "...(truncated)"
+            parts.append(f"body={trimmed}")
+
         return " | ".join(parts)
 
     def generate(
