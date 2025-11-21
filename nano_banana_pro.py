@@ -10,7 +10,7 @@ from google import genai
 from google.genai import types
 
 
-DEFAULT_MODEL_ID = "gemini-3.0-pro-image-preview"
+DEFAULT_MODEL_ID = "gemini-3-pro-image-preview"
 DEFAULT_IMAGE_SIZE = "1K"
 
 
