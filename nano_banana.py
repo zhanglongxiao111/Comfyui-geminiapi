@@ -151,12 +151,18 @@ class NanoBananaNode:
         client = genai.Client(api_key=api_key)
         contents = self._build_contents(prompt, image_payloads)
 
+        # If aspect_ratio is "auto", omit image_config so the model chooses default.
+        image_config = None
+        if aspect_ratio and aspect_ratio != "auto":
+            image_config = types.ImageConfig(aspect_ratio=aspect_ratio)
+
         config_kwargs = {
             "temperature": temperature,
             "top_p": top_p,
             "response_modalities": ["IMAGE"],
-            "image_config": types.ImageConfig(aspect_ratio=aspect_ratio),
         }
+        if image_config is not None:
+            config_kwargs["image_config"] = image_config
         if isinstance(seed, int) and seed >= 0:
             config_kwargs["seed"] = seed
 
