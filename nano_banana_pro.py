@@ -220,7 +220,7 @@ class NanoBananaProNode:
                 if len(results) >= desired:
                     break
             except Exception as exc:
-                print(f"[Nano Banana Pro] Request failed: {exc}")
+                print(f"[Nano Banana Pro] Request failed: {self._describe_exception(exc)}")
                 errors.append(exc)
                 continue
 
@@ -238,6 +238,31 @@ class NanoBananaProNode:
             results = [self._blank_image() for _ in range(desired)]
 
         return results[:desired]
+
+    def _describe_exception(self, exc: Exception) -> str:
+        parts: List[str] = []
+        try:
+            parts.append(repr(exc))
+        except Exception:
+            parts.append(str(exc))
+
+        status = None
+        # Common locations for HTTP status on SDK errors
+        for attr in ("status_code", "code"):
+            status = status or getattr(exc, attr, None)
+        response = getattr(exc, "response", None)
+        if response is not None:
+            status = status or getattr(response, "status_code", None)
+        if status:
+            parts.append(f"status={status}")
+
+        message = getattr(exc, "message", None)
+        if not message and getattr(exc, "args", None):
+            message = exc.args[0]
+        if isinstance(message, str) and message:
+            parts.append(f"message={message}")
+
+        return " | ".join(parts)
 
     def generate(
         self,
