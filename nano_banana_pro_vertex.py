@@ -10,6 +10,9 @@ from google import genai
 from google.genai import types
 
 
+# Vertex AI 图像生成模型
+# gemini-3-pro-image-preview: 最新专业图像模型，支持4K、14张参考图 (需要使用 global 区域)
+# gemini-2.0-flash-exp: 实验性快速模型
 DEFAULT_MODEL_ID = "gemini-3-pro-image-preview"
 DEFAULT_IMAGE_SIZE = "1K"
 
@@ -22,6 +25,7 @@ class NanoBananaProVertexNode:
                 "project_id": ("STRING", {"multiline": False, "default": ""}),
                 "location": (
                     [
+                        "global",
                         "us-central1",
                         "us-east1",
                         "us-east4",
@@ -62,7 +66,7 @@ class NanoBananaProVertexNode:
                         "me-central2",
                         "me-west1",
                     ],
-                    {"default": "us-central1"},
+                    {"default": "global"},
                 ),
                 "service_account": ("STRING", {"multiline": False, "default": ""}),
                 "aspect_ratio": (
@@ -254,6 +258,9 @@ class NanoBananaProVertexNode:
         if instruction:
             config.system_instruction = [types.Part.from_text(text=instruction)]
 
+        print(f"[Nano Banana Pro Vertex] Calling model: {model or DEFAULT_MODEL_ID}")
+        print(f"[Nano Banana Pro Vertex] Project: {project_id}, Location: {location}")
+        
         response = client.models.generate_content(
             model=model or DEFAULT_MODEL_ID,
             contents=contents,
