@@ -171,7 +171,7 @@ class NanoBananaProNode:
         client = genai.Client(api_key=api_key)
         contents = self._build_contents(prompt, image_payloads)
 
-        # Build image_config only if needed; omit when aspect_ratio is "auto" to avoid INVALID_ARGUMENT.
+        # Build image_config only if needed; omit aspect_ratio="auto" to avoid INVALID_ARGUMENT.
         image_cfg_kwargs = {}
         if aspect_ratio and aspect_ratio != "auto":
             image_cfg_kwargs["aspect_ratio"] = aspect_ratio
@@ -194,6 +194,9 @@ class NanoBananaProNode:
         instruction = system_instruction.strip()
         if instruction:
             config.system_instruction = [types.Part.from_text(text=instruction)]
+
+        print(f"[Nano Banana Pro] Calling model: {model or DEFAULT_MODEL_ID}")
+        print(f"[Nano Banana Pro] ImageConfig: {image_config}")
 
         response = client.models.generate_content(
             model=model or DEFAULT_MODEL_ID,
