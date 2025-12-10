@@ -1,5 +1,6 @@
 import io
 import os
+import importlib.metadata
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Optional
 
@@ -9,6 +10,30 @@ from PIL import Image
 from google import genai
 from google.genai import types
 
+# 检查 google-genai 版本
+MIN_GENAI_VERSION = "1.0.0"
+try:
+    _genai_version = importlib.metadata.version("google-genai")
+    _version_parts = [int(x) for x in _genai_version.split(".")[:3]]
+    _min_parts = [int(x) for x in MIN_GENAI_VERSION.split(".")[:3]]
+    if _version_parts < _min_parts:
+        raise RuntimeError(
+            f"\n{'='*60}\n"
+            f"[Nano Banana Pro] google-genai 版本过低！\n"
+            f"当前版本: {_genai_version}\n"
+            f"最低要求: {MIN_GENAI_VERSION}\n"
+            f"\n请运行以下命令升级:\n"
+            f"  pip install google-genai --upgrade\n"
+            f"{'='*60}\n"
+        )
+except importlib.metadata.PackageNotFoundError:
+    raise RuntimeError(
+        f"\n{'='*60}\n"
+        f"[Nano Banana Pro] 未安装 google-genai！\n"
+        f"\n请运行以下命令安装:\n"
+        f"  pip install google-genai>={MIN_GENAI_VERSION}\n"
+        f"{'='*60}\n"
+    )
 
 DEFAULT_MODEL_ID = "gemini-3-pro-image-preview"
 DEFAULT_IMAGE_SIZE = "1K"
